@@ -1,0 +1,33 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyo
+*.pyd
+
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+
+# Streamlit
+.streamlit/secrets.toml
+
+# OS & Temp
+.DS_Store
+Thumbs.db
+Desktop.ini
+*.tmp
+*.log
+questions_temp.html
+
+# Duplicate nested directory
+SIH FINAL PROTOTYPE/
+
+# Large Datasets & Intermediate Features (>50MB / >100MB limit)
+**/FIRE_FRP_2025/*.csv
+**/features/HCHO_FIRE_WIND_2025.csv
+**/features/SOURCE_RECEPTOR_TRANSPORT_MAP_2025.csv
+*.nc
