@@ -118,55 +118,58 @@ flowchart TD
 
 ## 📐 Mathematical & Atmospheric Formulations
 
-### 1. Meteorological Wind Field Derivation
-Extracted from ECMWF ERA5 10-meter zonal ($u_{10}$) and meridional ($v_{10}$) wind vectors:
+### 1. Meteorological Wind Field Derivation (u₁₀, v₁₀)
+Extracted from ECMWF ERA5 10-meter zonal (`u₁₀`) and meridional (`v₁₀`) wind components:
 
-$$
+```math
 \text{Wind Speed } (ws) = \sqrt{u_{10}^2 + v_{10}^2}
-$$
-
-$$
+```
+```math
 \text{Wind Direction } (wd) = \left( \text{atan2}(-u_{10}, -v_{10}) \times \frac{180}{\pi} + 360 \right) \pmod{360}
-$$
+```
 
-* **Wind Speed (`ws`)**: `sqrt(u10² + v10²)` (in m/s)
-* **Wind Direction (`wd`)**: Direction from which the wind blows (0° to 360° meteorological azimuth)
+> **Calculation Summary:**
+> - **Wind Speed (`ws`)**: `√(u₁₀² + v₁₀²)` (in m/s)
+> - **Wind Direction (`wd`)**: `(atan2(-u₁₀, -v₁₀) × 180 / π + 360) mod 360` (0°–360° meteorological azimuth)
 
 ---
 
-### 2. Candidate Emission Anomaly Score ($S_i$)
+### 2. Candidate Emission Anomaly Score (S_i)
 Isolates anomalous localized chemical column density while scaling for biomass combustion intensity:
 
-$$
+```math
 S_i = \left( \frac{C_i - \mu_{\text{bg}}}{\sigma_{\text{bg}}} \right) \times \left( 1 + \ln(1 + \text{FRP}_i) \right)
-$$
+```
 
-* **$C_i$**: Observed grid-cell tropospheric vertical column density
-* **$\mu_{\text{bg}}, \sigma_{\text{bg}}$**: Regional background mean and standard deviation
-* **$\text{FRP}_i$**: MODIS / VIIRS Fire Radiative Power in Megawatts (MW)
+> **Parameters:**
+> - **`C_i`**: Observed grid-cell tropospheric vertical column density
+> - **`μ_bg, σ_bg`**: Regional background mean and standard deviation across unperturbed baseline cells
+> - **`FRP_i`**: Active Fire Radiative Power from MODIS/VIIRS thermal sensors (in Megawatts, MW)
 
 ---
 
-### 3. Downwind Enhancement Ratio ($E_{\text{down}}$)
+### 3. Downwind Enhancement Ratio (E_down)
 Quantifies whether column concentrations are elevated in the downwind advection sector relative to the upwind background sector:
 
-$$
+```math
 E_{\text{down}} = \frac{\overline{C}_{\text{downwind}} - \overline{C}_{\text{upwind}}}{\overline{C}_{\text{upwind}}}
-$$
+```
 
-* Evaluated across multi-month observations using **two-sample hypothesis testing ($p < 0.05$)** to ensure legal defensibility against spurious readings.
+> **Statistical Significance:**
+> Evaluated across multi-month observations using **two-sample hypothesis testing (`p < 0.05`)** to ensure legal defensibility against spurious atmospheric readings.
 
 ---
 
-### 4. Dual-Regime Neural Ensemble Blending
+### 4. Dual-Regime Neural Ensemble Blending (ŷ_final)
 Combines regularized baseline regression with an extreme-tail network optimized on the top 15th percentile:
 
-$$
+```math
 \hat{y}_{\text{final}} = 0.925 \cdot \hat{y}_{\text{raw}} + 0.075 \cdot \hat{y}_{\text{extreme}}
-$$
+```
 
-* **$\hat{y}_{\text{raw}}$**: Standard distribution prediction from `cnn_lstm_raw`
-* **$\hat{y}_{\text{extreme}}$**: Peak episode prediction from `cnn_lstm_extreme` (weighted loss on PM2.5 > 150 µg/m³)
+> **Ensemble Heads:**
+> - **`ŷ_raw`**: Standard distribution prediction from `cnn_lstm_raw` (optimizes overall MAE & R²)
+> - **`ŷ_extreme`**: Peak episode prediction from `cnn_lstm_extreme` (weighted loss on PM2.5 > 150 µg/m³)
 
 ---
 
